@@ -1,0 +1,91 @@
+- hosts: all
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Install aptitude for Ansible
+      raw: test -e /usr/bin/aptitude || (apt -y update && apt install -y aptitude)
+
+- hosts: all
+  gather_facts: true
+
+- hosts: all
+  gather_facts: false
+  become: true
+  tasks:
+    - apt: pkg={{ item }} state=absent purge=yes autoclean=yes
+      with_items:
+        - webbrowser-app
+        - gnome-calendar
+        - thunderbird 
+        - unity-lens-shopping
+    - apt_key: url=https://nvidia.github.io/nvidia-container-runtime/gpgkey state=present
+    - get_url: url=https://nvidia.github.io/nvidia-container-runtime/ubuntu20.04/nvidia-container-runtime.list dest=/etc/apt/sources.list.d/nvidia-container-runtime.list
+    - apt_key: url=https://download.docker.com/linux/ubuntu/gpg state=present
+    - apt_key: url=https://packages.cloud.google.com/apt/doc/apt-key.gpg state=present
+    - apt_key: keyserver=hkp://keyserver.ubuntu.com:80 id=382E94DE state=present
+    - apt_repository: repo={{ item }} state=present
+      with_items:
+        - deb http://us.archive.ubuntu.com/ubuntu/ focal main restricted
+        - deb http://us.archive.ubuntu.com/ubuntu/ focal-updates main restricted
+        - deb http://us.archive.ubuntu.com/ubuntu/ focal universe
+        - deb http://us.archive.ubuntu.com/ubuntu/ focal-updates universe
+        - deb http://us.archive.ubuntu.com/ubuntu/ focal multiverse
+        - deb http://us.archive.ubuntu.com/ubuntu/ focal-updates multiverse
+        - deb http://us.archive.ubuntu.com/ubuntu/ focal-backports main restricted universe multiverse
+#       - deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+        - deb http://apt.kubernetes.io/ kubernetes-xenial main
+#       - deb https://apt.datadoghq.com/ stable 6
+        - ppa:graphics-drivers/ppa
+        - ppa:yubico/stable
+    - stat: path=/etc/cloud/cloud.cfg
+      register: cloud_config
+    - lineinfile: 'dest=/etc/cloud/cloud.cfg state=present regexp="^preserve_hostname:" line="preserve_hostname: true"'
+      when: cloud_config.stat.exists == True
+    - mount: name=swap fstype=swap state=absent
+    - command: swapoff -a
+      when: ansible_swaptotal_mb > 0
+    - apt: update_cache=yes upgrade=yes autoremove=yes
+    - package: name={{ item }} state=latest
+      with_items:
+       - gdebi-core
+       - ntp
+       - htop
+       - iftop
+       - bmon
+       - apt-transport-https
+       - ca-certificates
+       - curl
+       - software-properties-common
+       - intel-microcode
+       - openvpn
+       - network-manager-openvpn
+       - network-manager-openvpn-gnome
+       - openjdk-11-jre 
+       - openjdk-11-jdk
+       - libpam-u2f
+#       - icedtea-netx
+       - kubectl
+       - traceroute
+       - autoconf 
+       - build-essential 
+       - cmake
+       - net-tools
+       - docker.io
+       - python3-pip
+#       - python-pip
+       - ubuntu-drivers-common
+       - nvidia-container-runtime
+       - dkms
+    - pip: name=docker
+    - group: name=sudo state=present
+    - group: name=wheel state=present
+    - user: name={{ ansible_user }} shell=/bin/bash groups=adm,sudo,wheel,docker append=yes
+    - lineinfile: "dest=/etc/sudoers state=present line='%sudo ALL=(ALL) NOPASSWD: ALL'"
+    - sysctl: name=fs.inotify.max_user_watches value=524288
+    - sysctl: name=vm.max_map_count value=262144
+    - command: ubuntu-drivers autoinstall
+    - service: name=docker enabled=true 
+    - command: wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb 
+    - command: gdebi google-chrome-stable_current_amd64.deb 
+    
+
