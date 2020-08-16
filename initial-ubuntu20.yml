@@ -86,6 +86,6 @@
     - command: ubuntu-drivers autoinstall
     - service: name=docker enabled=true 
     - command: wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb 
-    - command: gdebi google-chrome-stable_current_amd64.deb 
+    - command: gdebi --n google-chrome-stable_current_amd64.deb 
     
 
