@@ -80,6 +80,7 @@
        - nvidia-container-runtime
        - dkms
        - wireguard
+       - nfs-common
     - pip: name=docker
     - group: name=sudo state=present
     - group: name=wheel state=present
