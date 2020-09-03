@@ -79,7 +79,7 @@
        - ubuntu-drivers-common
        - nvidia-container-runtime
        - dkms
-       
+       - wireguard
     - pip: name=docker
     - group: name=sudo state=present
     - group: name=wheel state=present
