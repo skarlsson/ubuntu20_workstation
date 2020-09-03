@@ -2,7 +2,7 @@
 
 ```
 sudo apt -y update
-sudo apt-get install ssh ansible git aptitude wget unzip
+sudo apt-get -y install ssh ansible git aptitude wget unzip
 wget https://github.com/skarlsson/ubuntu20_workstation/archive/master.zip
 unzip master.zip
 cd ubuntu20_workstation-master
