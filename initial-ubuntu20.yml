@@ -81,6 +81,8 @@
        - dkms
        - wireguard
        - nfs-common
+       - jq
+       - postgresql-client
     - pip: name=docker
     - group: name=sudo state=present
     - group: name=wheel state=present
