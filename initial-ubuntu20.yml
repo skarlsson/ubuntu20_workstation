@@ -23,6 +23,7 @@
     - get_url: url=https://nvidia.github.io/nvidia-container-runtime/ubuntu20.04/nvidia-container-runtime.list dest=/etc/apt/sources.list.d/nvidia-container-runtime.list
     - apt_key: url=https://download.docker.com/linux/ubuntu/gpg state=present
     - apt_key: url=https://packages.cloud.google.com/apt/doc/apt-key.gpg state=present
+    - apt_key: url=https://updates.signal.org/desktop/apt/keys.asc state=present
     - apt_key: keyserver=hkp://keyserver.ubuntu.com:80 id=382E94DE state=present
     - apt_repository: repo={{ item }} state=present
       with_items:
@@ -34,8 +35,10 @@
         - deb http://us.archive.ubuntu.com/ubuntu/ focal-updates multiverse
         - deb http://us.archive.ubuntu.com/ubuntu/ focal-backports main restricted universe multiverse
         - deb https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ focal main
+        - deb http://apt.llvm.org/focal/ llvm-toolchain-focal-13 main
 #       - deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
         - deb http://apt.kubernetes.io/ kubernetes-xenial main
+#        - deb https://updates.signal.org/desktop/apt xenial main
 #       - deb https://apt.datadoghq.com/ stable 6
         - ppa:graphics-drivers/ppa
         - ppa:yubico/stable
@@ -60,13 +63,8 @@
        - software-properties-common
        - intel-microcode
        - openvpn
-       - network-manager-openvpn
-       - network-manager-openvpn-gnome
        - adoptopenjdk-8-hotspot 
-#       - openjdk-11-jre 
-#       - openjdk-11-jdk
        - libpam-u2f
-#       - icedtea-netx
        - kubectl
        - traceroute
        - autoconf 
@@ -75,7 +73,6 @@
        - net-tools
        - docker.io
        - python3-pip
-#       - python-pip
        - ubuntu-drivers-common
        - nvidia-container-runtime
        - dkms
@@ -83,6 +80,8 @@
        - nfs-common
        - jq
        - postgresql-client
+#       - signal-desktop
+       - bat
     - pip: name=docker
     - group: name=sudo state=present
     - group: name=wheel state=present
